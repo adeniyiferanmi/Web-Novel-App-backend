@@ -1,6 +1,8 @@
 import authModel from "../Model/AuthModel.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+dotenv.config();
 
 export const signUp = async (req, res, next) => {
   const { fullName, email, password, confirmPassword, penName, Profile } =
@@ -81,7 +83,7 @@ export const signIn = async (req, res, next) => {
   }
 };
 
-export const verifyToken = (req, res, next) => {
+export const verifyToken = async (req, res, next) => {
   let token;
   try {
     if (
@@ -97,18 +99,20 @@ export const verifyToken = (req, res, next) => {
       });
     }
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = authModel.findById(decoded.id);
+    const user = await authModel.findById(decoded.id).select("-password");
     if (!user) {
       return res.status(401).json({
         status: "error",
         message: "Unauthorized, user not found",
       });
     }
-    res.status(200).json({
-      status: "success",
-      message: "You are authenticated",
-      data: user,
-    });
+    req.user = user;
+    next();
+    // res.status(200).json({
+    //   status: "success",
+    //   message: "You are authenticated",
+    //   data: user,
+    // });
   } catch (error) {
     return res.status(401).json({
       status: "error",

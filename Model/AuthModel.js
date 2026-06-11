@@ -23,8 +23,8 @@ const authSchema = new mongoose.Schema({
   Profile: {
     type: String,
     required: true,
-    enum: ["I'm an Author", "I'm a Reader"],
-    default: "I'm a Reader",
+    enum: ["Author", "Reader"],
+    default: "Reader",
   },
   PenName: {
     type: String,
