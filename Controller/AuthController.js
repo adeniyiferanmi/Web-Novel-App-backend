@@ -121,3 +121,75 @@ export const verifyToken = async (req, res, next) => {
     next(error);
   }
 };
+
+export const googleAuth = async (req, res, next) => {
+  const { token } = req.body;
+  try {
+    const response = await fetch(
+      `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${token}`,
+    );
+    const googleUser = await response.json();
+
+    let user = await authModel.findOne({ email: googleUser.email });
+    let isNewUser = false;
+    if (!user) {
+      ((user = await authModel.create({
+        fullName: googleUser.name,
+        email: googleUser.email,
+
+        password: Math.random().toString(36), // random password
+        googleId: googleUser.id,
+      })),
+        (isNewUser = true));
+    }
+    const jwtToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: process.env.JWT_EXP,
+    });
+
+    return res.status(200).json({
+      status: "success",
+      token: jwtToken,
+      message: "Google login successful",
+      needsProfile: user.Profile,
+      data: {
+        _id: user._id,
+        fullName: user.fullName,
+        email: user.email,
+        Profile: user.Profile,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};
+
+export const updateProfile = async (req, res, next) => {
+  const { Profile } = req.body;
+
+  try {
+    const user = await authModel
+      .findByIdAndUpdate(
+        req.user._id,
+        {
+          Profile,
+        },
+        { new: true },
+      )
+      .select("-password");
+    if (!user) {
+      return res.status(400).json({
+        status: "error",
+        message: "Unable to Update Profile",
+      });
+    }
+    res.status(200).json({
+      status: "success",
+      message: "Profile updated successfully",
+      data: user,
+    });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+};

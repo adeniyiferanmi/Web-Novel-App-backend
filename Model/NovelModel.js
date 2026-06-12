@@ -54,7 +54,8 @@ const novelSchema = new mongoose.Schema(
       default: 0,
     },
   },
-  { timestamps: true }, 
+  { timestamps: true },
 );
 
-export default mongoose.model("Novel", novelSchema);
+const NovelModel = mongoose.model("Novel", novelSchema);
+export default NovelModel;

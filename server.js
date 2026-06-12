@@ -6,6 +6,7 @@ import AuthRouter from "./Routes/AuthRouter.js";
 import errorHandler from "./Middleware/errorhandler.js";
 import cors from "cors";
 import novelRouter from "./Routes/NovelRouter.js";
+import chapterRouter from "./Routes/ChapterRouter.js";
 dotenv.config();
 
 const app = express();
@@ -29,5 +30,6 @@ connectToDb();
 
 app.use("/auth", AuthRouter);
 app.use("/novel", novelRouter);
+app.use("/chapter", chapterRouter);
 
 app.use("/{*any}", errorHandler);

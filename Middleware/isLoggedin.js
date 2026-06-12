@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 dotenv.config();
+import authModel from "../Model/AuthModel.js";
 
 const isLoggedin = async (req, res, next) => {
   let token;

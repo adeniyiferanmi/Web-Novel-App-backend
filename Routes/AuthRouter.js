@@ -1,5 +1,11 @@
 import { Router } from "express";
-import { signIn, signUp, verifyToken } from "../Controller/AuthController.js";
+import {
+  googleAuth,
+  signIn,
+  signUp,
+  updateProfile,
+  verifyToken,
+} from "../Controller/AuthController.js";
 import isLoggedin from "../Middleware/isLoggedin.js";
 
 const AuthRouter = Router();
@@ -13,5 +19,7 @@ AuthRouter.get("/verifytoken", verifyToken, (req, res) => {
     data: req.user,
   });
 });
+AuthRouter.post("/google", googleAuth);
+AuthRouter.put("/update-profile", verifyToken, updateProfile);
 
 export default AuthRouter;

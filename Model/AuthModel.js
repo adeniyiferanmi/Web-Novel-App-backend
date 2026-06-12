@@ -10,6 +10,9 @@ const authSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
+  googleId: {
+    type: String,
+  },
   password: {
     type: String,
     required: true,
@@ -17,7 +20,7 @@ const authSchema = new mongoose.Schema({
   },
   confirmPassword: {
     type: String,
-    required: true,
+    required: false,
     min: 6,
   },
   Profile: {
